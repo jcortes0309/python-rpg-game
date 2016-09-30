@@ -25,7 +25,10 @@ class Character(object):
         self.health -= points
         print "%s received %d damage." % (self.name, points)
         if self.health <= 0:
-            print "%s is dead." % self.name
+            if self.name == "zombie":
+                pass
+            else:
+                print "%s is dead." % self.name
 
     def print_status(self):
         print "%s has %d health and %d power." % (self.name, self.health, self.power)
@@ -104,6 +107,19 @@ class Shadow(Character):
         self.health = 1
         self.power = 2
 
+class Zombie(Character):
+    def __init__(self):
+        self.name = 'zombie'
+        self.health = 1
+        self.power = 1
+
+    def alive(self):
+        if random.random() <= .25:
+            print "%s has left." % self.name
+            return False
+        else:
+            return True
+
 class Battle(object):
     def do_battle(self, hero, enemy):
         print "====================="
@@ -181,7 +197,8 @@ class Store(object):
                 hero.buy(item)
 
 hero = Hero()
-enemies = [Goblin(), Wizard(), Medic(), Shadow()]
+# enemies = [Goblin(), Wizard(), Medic(), Shadow(), Zombie()]
+enemies = [Zombie()]
 battle_engine = Battle()
 shopping_engine = Store()
 
