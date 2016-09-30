@@ -50,10 +50,19 @@ class Hero(Character):
         if not self.alive():
             return
         print "%s attacks %s" % (self.name, enemy.name)
-        if random.random() <= .2:
-            enemy.receive_damage(self.power * 2)
+        if enemy.name == "shadow":
+            if random.random() >= .10:
+                enemy.receive_damage(self.power * 0)
+            else:
+                if random.random() <= .2:
+                    enemy.receive_damage(self.power * 2)
+                else:
+                    enemy.receive_damage(self.power)
         else:
-            enemy.receive_damage(self.power)
+            if random.random() <= .2:
+                enemy.receive_damage(self.power * 2)
+            else:
+                enemy.receive_damage(self.power)
         time.sleep(1.5)
 
 class Goblin(Character):
@@ -88,6 +97,12 @@ class Medic(Character):
             self.health += 2
         else:
             pass
+
+class Shadow(Character):
+    def __init__(self):
+        self.name = 'shadow'
+        self.health = 1
+        self.power = 2
 
 class Battle(object):
     def do_battle(self, hero, enemy):
@@ -166,7 +181,7 @@ class Store(object):
                 hero.buy(item)
 
 hero = Hero()
-enemies = [Goblin(), Wizard(), Medic()]
+enemies = [Goblin(), Wizard(), Medic(), Shadow()]
 battle_engine = Battle()
 shopping_engine = Store()
 
