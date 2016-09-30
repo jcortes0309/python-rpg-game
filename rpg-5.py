@@ -77,6 +77,18 @@ class Wizard(Character):
         if swap_power:
             self.power, enemy.power = enemy.power, self.power
 
+class Medic(Character):
+    def __init__(self):
+        self.name = 'medic'
+        self.health = 8
+        self.power = 3
+
+    def regenerate(self):
+        if random.random() <= .20:
+            self.health += 2
+        else:
+            pass
+
 class Battle(object):
     def do_battle(self, hero, enemy):
         print "====================="
@@ -95,6 +107,10 @@ class Battle(object):
             input = int(raw_input())
             if input == 1:
                 hero.attack(enemy)
+                if enemy.name == "medic":
+                    enemy.regenerate()
+                else:
+                    pass
             elif input == 2:
                 pass
             elif input == 3:
@@ -150,7 +166,7 @@ class Store(object):
                 hero.buy(item)
 
 hero = Hero()
-enemies = [Goblin(), Wizard()]
+enemies = [Goblin(), Wizard(), Medic()]
 battle_engine = Battle()
 shopping_engine = Store()
 
