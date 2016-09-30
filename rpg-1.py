@@ -18,7 +18,19 @@ class Character(object):
             return False
 
     def print_status(self):
-        print "The %s has %d health and %d power." % (self.__class__.__name__, self.health, self.power)
+        print "The %s has %d health and %d power." % (type(self).__name__, self.health, self.power)
+
+    def attack(self, enemy):
+        enemy.health -= self.power
+        if type(self).__name__ == "Hero":
+            print "You do %d damage to the %s." % (self.power, type(enemy).__name__)
+            if enemy.health <= 0:
+                print "The %s is dead." % type(enemy).__name__
+        else:
+            print "The %s does %d damage to you." % (type(self).__name__, self.power)
+            if enemy.health <= 0:
+                print "You are dead."
+
 
 class Hero(Character):
     def __init__(self):
@@ -26,23 +38,11 @@ class Hero(Character):
         self.health = 10
         self.power = 5
 
-    def attack(self, enemy):
-        enemy.health -= self.power
-        print "You do %d damage to the goblin." % self.power
-        if goblin.health <= 0:
-            print "The goblin is dead."
-
 class Goblin(Character):
     def __init__(self):
         # self.name = "goblin"
         self.health = 6
         self.power = 2
-
-    def attack(self, enemy):
-        enemy.health -= self.power
-        print "The goblin does %d damage to you." % self.power
-        if hero.health <= 0:
-            print "You are dead."
 
 
 hero = Hero()
