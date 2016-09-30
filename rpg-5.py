@@ -17,21 +17,21 @@ class Character(object):
     def attack(self, enemy):
         if not self.alive():
             return
-        print "%s attacks %s" % (self.name, enemy.name)
+        print "\t%s attacks %s" % (self.name, enemy.name)
         enemy.receive_damage(self.power)
         time.sleep(1.5)
 
     def receive_damage(self, points):
         self.health -= points
-        print "%s received %d damage." % (self.name, points)
+        print "\t%s received %d damage." % (self.name, points)
         if self.health <= 0:
             if self.name == "zombie":
                 pass
             else:
-                print "%s is dead." % self.name
+                print "\t%s is dead." % self.name
 
     def print_status(self):
-        print "%s has %d health and %d power." % (self.name, self.health, self.power)
+        print "\t%s has %d health and %d power." % (self.name, self.health, self.power)
 
 class Hero(Character):
     def __init__(self):
@@ -42,7 +42,7 @@ class Hero(Character):
 
     def restore(self):
         self.health = 10
-        print "Hero's heath is restored to %d!" % self.health
+        print "\tHero's heath is restored to %d!" % self.health
         time.sleep(1)
 
     def buy(self, item):
@@ -52,7 +52,7 @@ class Hero(Character):
     def attack(self, enemy):
         if not self.alive():
             return
-        print "%s attacks %s" % (self.name, enemy.name)
+        print "\t%s attacks %s" % (self.name, enemy.name)
         if enemy.name == "shadow":
             if random.random() >= .10:
                 enemy.receive_damage(self.power * 0)
@@ -83,7 +83,7 @@ class Wizard(Character):
     def attack(self, enemy):
         swap_power = random.random() > 0.5
         if swap_power:
-            print "%s swaps power with %s during attack" % (self.name, enemy.name)
+            print "\t%s swaps power with %s during attack" % (self.name, enemy.name)
             self.power, enemy.power = enemy.power, self.power
         super(Wizard, self).attack(enemy)
         if swap_power:
@@ -94,10 +94,11 @@ class Medic(Character):
         self.name = 'medic'
         self.health = 8
         self.power = 3
+        self.recuperate = 2
 
     def regenerate(self):
         if random.random() <= .20:
-            self.health += 2
+            self.health += self.recuperate
         else:
             pass
 
@@ -120,16 +121,39 @@ class Zombie(Character):
         else:
             return True
 
+class Borg(Character):
+    def __init__(self):
+        self.name = 'borg'
+        self.health = 6
+        self.power = 2
+        self.recuperate = 4
+
+    def regenerate(self):
+        self.health += self.recuperate
+
+    def attack(self, enemy):
+        if not self.alive():
+            return
+        print "\t%s attacks %s" % (self.name, enemy.name)
+        if random.random() <= .4:
+            enemy.receive_damage(self.power * 2)
+        else:
+            enemy.receive_damage(self.power)
+
+
+# class Thief(Character):
+
+
 class Battle(object):
     def do_battle(self, hero, enemy):
-        print "====================="
+        print "\n====================="
         print "Hero faces the %s" % enemy.name
-        print "====================="
+        print "=====================\n"
         while hero.alive() and enemy.alive():
             hero.print_status()
             enemy.print_status()
             time.sleep(1.5)
-            print "-----------------------"
+            print "\n-----------------------"
             print "What do you want to do?"
             print "1. fight %s" % enemy.name
             print "2. do nothing"
@@ -138,24 +162,25 @@ class Battle(object):
             input = int(raw_input())
             if input == 1:
                 hero.attack(enemy)
-                if enemy.name == "medic":
-                    enemy.regenerate()
-                else:
-                    pass
             elif input == 2:
                 pass
             elif input == 3:
-                print "Goodbye."
+                print "\tGoodbye."
                 exit(0)
             else:
-                print "Invalid input %r" % input
+                print "\tInvalid input %r" % input
                 continue
             enemy.attack(hero)
+            if enemy.name == "medic" or enemy.name == "borg":
+                enemy.regenerate()
+                print "\tOH NO! THE %s REGENERATED %d HEALTH!" % (enemy.name.upper(), enemy.recuperate)
+                time.sleep(2.0)
+            else:
+                pass
         if hero.alive():
-            print "You defeated the %s" % enemy.name
+            print "\tYou defeated the %s" % enemy.name
             return True
         else:
-            print "YOU LOSE!"
             return False
 
 class Tonic(object):
@@ -163,14 +188,14 @@ class Tonic(object):
     name = 'tonic'
     def apply(self, character):
         character.health += 2
-        print "%s's health increased to %d." % (character.name, character.health)
+        print "\t%s's health increased to %d." % (character.name, character.health)
 
 class Sword(object):
     cost = 10
     name = 'sword'
     def apply(self, hero):
         hero.power += 2
-        print "%s's power increased to %d." % (hero.name, hero.power)
+        print "\t%s's power increased to %d." % (hero.name, hero.power)
 
 class Store(object):
     # If you define a variable in the scope of a class:
@@ -179,7 +204,7 @@ class Store(object):
     items = [Tonic, Sword]
     def do_shopping(self, hero):
         while True:
-            print "====================="
+            print "\n====================="
             print "Welcome to the store!"
             print "====================="
             print "You have %d coins." % hero.coins
@@ -197,16 +222,20 @@ class Store(object):
                 hero.buy(item)
 
 hero = Hero()
-# enemies = [Goblin(), Wizard(), Medic(), Shadow(), Zombie()]
-enemies = [Zombie()]
+# enemies = [Goblin(), Wizard(), Medic(), Shadow(), Zombie(), Borg()]
+enemies = [Borg()]
 battle_engine = Battle()
 shopping_engine = Store()
 
 for enemy in enemies:
     hero_won = battle_engine.do_battle(hero, enemy)
     if not hero_won:
-        print "YOU LOSE!"
+        if enemy.name == 'borg':
+            print "\tYOU HAVE BEEN ASSIMILATED!!"
+        else:
+            pass
+        print "\tYOU LOSE!"
         exit(0)
     shopping_engine.do_shopping(hero)
 
-print "YOU WIN!"
+print "\tYOU WIN!"
