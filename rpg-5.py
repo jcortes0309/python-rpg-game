@@ -141,7 +141,13 @@ class Borg(Character):
             enemy.receive_damage(self.power)
 
 
-# class Thief(Character):
+class Thief(Character):
+    def __init__(self):
+        self.name = 'thief'
+        self.health = 12
+        self.power = 2
+
+
 
 
 class Battle(object):
@@ -177,6 +183,7 @@ class Battle(object):
                 time.sleep(2.0)
             else:
                 pass
+            # if enemy.name == 'thief':
         if hero.alive():
             print "\tYou defeated the %s" % enemy.name
             return True
@@ -222,8 +229,8 @@ class Store(object):
                 hero.buy(item)
 
 hero = Hero()
-# enemies = [Goblin(), Wizard(), Medic(), Shadow(), Zombie(), Borg()]
-enemies = [Borg()]
+# enemies = [Goblin(), Wizard(), Medic(), Shadow(), Zombie(), Borg(), Thief()]
+enemies = [Thief()]
 battle_engine = Battle()
 shopping_engine = Store()
 
