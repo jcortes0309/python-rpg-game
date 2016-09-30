@@ -140,14 +140,11 @@ class Borg(Character):
         else:
             enemy.receive_damage(self.power)
 
-
 class Thief(Character):
     def __init__(self):
         self.name = 'thief'
         self.health = 12
         self.power = 2
-
-
 
 
 class Battle(object):
@@ -204,13 +201,26 @@ class Sword(object):
         hero.power += 2
         print "\t%s's power increased to %d." % (hero.name, hero.power)
 
+class SuperTonic(object):
+    cost = 10
+    name = "super tonic"
+    def apply(self, hero):
+        hero.health = 10
+        print "\t%s's health increased to %d." % (hero.name, hero.health)
+
+
 class Store(object):
     # If you define a variable in the scope of a class:
     # This is a class variable and you can access it like
     # Store.items => [Tonic, Sword]
-    items = [Tonic, Sword]
+    items = [Tonic, Sword, SuperTonic]
     def do_shopping(self, hero):
         while True:
+            # Removes SuperTonic from the list if hero's healt >= 8.  This is done because the SuperTonic will only get the hero's health back up to 10 and nothing more.
+            if hero.health >= 8:
+                Store.items.pop()
+            else:
+                pass
             print "\n====================="
             print "Welcome to the store!"
             print "====================="
@@ -230,7 +240,7 @@ class Store(object):
 
 hero = Hero()
 # enemies = [Goblin(), Wizard(), Medic(), Shadow(), Zombie(), Borg(), Thief()]
-enemies = [Thief()]
+enemies = [Goblin(), Thief()]
 battle_engine = Battle()
 shopping_engine = Store()
 
